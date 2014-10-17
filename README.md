@@ -9,7 +9,7 @@ You can view the Microsoft Open Source Licenses here: http://www.microsoft.com/e
 NOTE: I have only tested this with Windows 7.  
 
 ###How this works:
-First, an important understanding about the way Windows drag and drop works: if you right-click to drag and drop, it will not do so immediately, but instead will open a context menu, with **Move here** bolded because it is the default. Now, what happens when you left-click drag and drop, like normal? This context menu is silently used and the default is chosen automatically. 
+First, an important understanding about the way Windows drag and drop works: if you right-click to drag and drop, upon dropping the file, it will not be moved immediately, but instead explorer will open a context menu, with **Move here** bolded because it is the default. Now, what happens when you left-click drag and drop is that this context menu is silently used and the default is chosen automatically. 
 
 So basically what the code does is catch this drag and drop context menu, check to see if the default is **Move here**, and if so, pops up a dialog window, asking if you are sure you want to move. If you say OK, it lets go of its stranglehold on your context menu and allows the move. If you hit Cancel, it will create a *new* context menu item called **Don't move**, which does exactly what it says, and it will set that as the default item.
 
