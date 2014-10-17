@@ -1,7 +1,8 @@
 ##DragDropInterceptor
 ===================
+If you have ever worked in a Windows environment where many users shared files on a server, you have probably seen it happen where a folder or file is suddenly gone, only to be discovered in some other folder (often a sibling folder). This is usually due to an accident that is very easy to do: press slightly too hard on the mouse button while moving the cursor over the windows explorer window, causing a drag and drop event with no confirmation.
 
-A simple shell extension for Windows to stop accidental drag and drop moves of folders.  This is essentially a "fork" of the CppShellExtDragDropHandler found here: https://code.msdn.microsoft.com/CppShellExtDragDropHandler-bbdb6bac
+So... this is a simple shell extension for Windows to create that confirmation.  It is essentially a "fork" of the CppShellExtDragDropHandler example found here: https://code.msdn.microsoft.com/CppShellExtDragDropHandler-bbdb6bac You can view the Microsoft Open Source Licenses here: http://www.microsoft.com/en-us/openness/licenses.aspx
 
 NOTE: I have only tested this with Windows 7.  
 
