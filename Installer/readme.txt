@@ -1,8 +1,12 @@
- //----------------------------------\\
-//------------------------------------\\
-|| DragDropInterceptor by Trey Miller ||
-\\------------------------------------//
- \\----------------------------------//
+ ___________________________________________
+//                                         \\
+||    DragDropInterceptor by Trey Miller   ||
+\\                                         //
+ \\------------ { Broken e; } ------------//
+ //                                       \\ 
+// http://broken-e.com/dragdropinterceptor \\
+\\_________________________________________//
+
  
 A modification of Microsoft's CppShellExtDragDropHandler to provide a confirmation dialog upon a drag and drop move event in a Windows environment.
 
@@ -15,8 +19,6 @@ If you have ever worked in a Windows environment where many users shared files o
 So... this is a simple shell extension for Windows to create that confirmation. It is essentially a "fork" of the CppShellExtDragDropHandler example found here: https://code.msdn.microsoft.com/CppShellExtDragDropHandler-bbdb6bac
 
 You can view the Microsoft Open Source Licenses here: http://www.microsoft.com/en-us/openness/licenses.aspx
-
-NOTE: I have only tested this with Windows 7.
 
 How this works:
 
