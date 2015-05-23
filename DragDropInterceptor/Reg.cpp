@@ -106,11 +106,34 @@ HRESULT GetHKCRRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName,
         // Get the data for the specified value name.
         hr = HRESULT_FROM_WIN32(RegQueryValueEx(hKey, pszValueName, NULL, 
             NULL, reinterpret_cast<LPBYTE>(pszData), &cbData));
-
+		
         RegCloseKey(hKey);
     }
 
     return hr;
+}
+
+
+HRESULT GetHKLMRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName,
+	PWSTR pszData, DWORD cbData)
+{
+	HRESULT hr;
+	HKEY hKey = NULL;
+
+	// Try to open the specified registry key. 
+	hr = HRESULT_FROM_WIN32(RegOpenKeyEx(HKEY_LOCAL_MACHINE, pszSubKey, 0,
+		KEY_READ, &hKey));
+
+	if (SUCCEEDED(hr))
+	{
+		// Get the data for the specified value name.
+		hr = HRESULT_FROM_WIN32(RegQueryValueEx(hKey, pszValueName, NULL,
+			NULL, reinterpret_cast<LPBYTE>(pszData), &cbData));
+
+		RegCloseKey(hKey);
+	}
+
+	return hr;
 }
 
 #pragma endregion

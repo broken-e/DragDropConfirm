@@ -30,6 +30,9 @@ WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 #include <Shlwapi.h>
 #include <string>
 #include <sstream>
+#include "Reg.h"
+
+
 #pragma comment(lib, "shlwapi.lib")
 
 extern long g_cDllRef;
@@ -154,18 +157,41 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 	wchar_t szString[256];
 	dmii.dwTypeData = szString;
 	// copy default menu item's info into dmii
-	if (!GetMenuItemInfo(hMenu, defPos, TRUE, &dmii)) 
+	if (!GetMenuItemInfo(hMenu, defPos, TRUE, &dmii))
 	{
 		return HRESULT_FROM_WIN32(GetLastError());
 	}
-	// If default menu item's string doesn't equal "&Move here" then we don't do anything. 
-	if (wcscmp(L"&Move here", dmii.dwTypeData)) {
+
+	wchar_t itemText[MAX_PATH] = L"&Move here";
+	// try to retrieve overridden itemText from registry
+	HRESULT hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropInterceptor\\", L"ItemText", itemText, MAX_PATH);
+
+	if (!SUCCEEDED(hr))
+	{ // if overridden text is not found, see if we want to display the value in a messagebox
+		wchar_t defaultText[4];
+		hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropInterceptor\\", L"ShowDefaultText", defaultText, 4);
+		if (SUCCEEDED(hr) && defaultText[0])
+		{ // we'll display the actual current default value, for language customization
+			MessageBoxW(0, dmii.dwTypeData, L"The Default Item's Value Is:", MB_OK | MB_ICONINFORMATION);
+		}
+	}
+
+	// If default menu item's string doesn't equal "&Move here" or the overridden text, then we don't do anything. 
+	if (wcscmp(itemText, dmii.dwTypeData))
+	{
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
 	}
-	
+
+	// set messagebox title and description
+	wchar_t askTitle[MAX_PATH] = L"Hold up there...";
+	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropInterceptor\\", L"AskTitle", askTitle, MAX_PATH);
+	wchar_t askDescription[1024] = L"Are you sure you want to move the file(s) or folder(s)?";
+	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropInterceptor\\", L"AskDescription", askDescription, 1024);
+
 	// ask if we want to do the default action (should be moving files)
-	int button = MessageBoxA(0, "Are you sure you want to move the file(s) or folder(s)?", "Hold up there...", MB_OKCANCEL | MB_ICONEXCLAMATION | MB_DEFBUTTON2);
-	if (button == IDCANCEL) { // add the com-blocking menu item to stop default move action
+	int button = MessageBoxW(0, askDescription, askTitle, MB_OKCANCEL | MB_ICONEXCLAMATION | MB_DEFBUTTON2);
+	if (button == IDCANCEL)
+	{ // add the com-blocking menu item to stop default move action
 		// Use either InsertMenu or InsertMenuItem to add menu items.
 		MENUITEMINFO mii = { sizeof(mii) };
 		mii.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
@@ -173,12 +199,14 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 		mii.fType = MFT_STRING;
 		mii.dwTypeData = m_pszMenuText;
 		mii.fState = MFS_ENABLED;
-		if (!InsertMenuItem(hMenu, indexMenu, TRUE, &mii)) {
+		if (!InsertMenuItem(hMenu, indexMenu, TRUE, &mii))
+		{
 			return HRESULT_FROM_WIN32(GetLastError());
 		}
 
 		// set new item to default
-		if (!SetMenuDefaultItem(hMenu, (UINT)idCmdFirst, (UINT)FALSE)) {
+		if (!SetMenuDefaultItem(hMenu, (UINT)idCmdFirst, (UINT)FALSE))
+		{
 			return HRESULT_FROM_WIN32(GetLastError());
 		}
 
@@ -186,7 +214,9 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 		//   // Set the code value to the offset of the largest command identifier 
 		//   // that was assigned, plus one (1).
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(IDM_RUNFROMHERE + 1));
-	} else {
+	}
+	else
+	{
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
 	}
 }

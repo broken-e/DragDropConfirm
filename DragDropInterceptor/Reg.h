@@ -131,3 +131,8 @@ HRESULT RegisterShellExtDragDropHandler(const CLSID& clsid, PCWSTR pszFriendlyNa
 //   HKCR\Drive\shellex\DragDropHandlers in the registry.
 //
 HRESULT UnregisterShellExtDragDropHandler(const CLSID& clsid);
+
+
+
+HRESULT GetHKLMRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName, PWSTR pszData, DWORD cbData);
+HRESULT GetHKCRRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName, PWSTR pszData, DWORD cbData);
