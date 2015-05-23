@@ -1,4 +1,4 @@
-##DragDropInterceptor
+##DragDropConfirm
 
 If you have ever worked in a Windows environment where many users shared files on a server, you have probably seen it happen where a folder or file is suddenly gone, only to be discovered in some other folder (often a sibling folder). This is usually due to an accident that is very easy to do: press slightly too hard on the mouse button while moving the cursor over the windows explorer window, causing a drag and drop move event with no confirmation.
 
