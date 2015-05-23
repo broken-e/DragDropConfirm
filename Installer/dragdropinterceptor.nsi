@@ -22,14 +22,14 @@ InstallDirRegKey HKLM "Software\DragDropInterceptor" "Install_Dir"
 RequestExecutionLevel admin
 ;--------------------------------
 
-VIProductVersion "1.0.0.1"
+VIProductVersion "1.0.1.0"
 VIAddVersionKey ProductName "DragDropInterceptor"
 ;VIAddVersionKey Comments ""
 VIAddVersionKey CompanyName "broken-e.com"
 VIAddVersionKey LegalCopyright "Trey Miller"
 VIAddVersionKey FileDescription "DragDropInterceptor by Trey Miller"
-VIAddVersionKey FileVersion "1.0.0.1"
-VIAddVersionKey ProductVersion "1.0.0.1"
+VIAddVersionKey FileVersion "1.0.1.0"
+VIAddVersionKey ProductVersion "1.0.1.0"
 VIAddVersionKey InternalName "DragDropInterceptor Setup"
 ;VIAddVersionKey LegalTrademarks ""
 ;VIAddVersionKey OriginalFilename ""
@@ -81,9 +81,9 @@ Section "Program Files"
   	${If} ${RunningX64}	
 		!define LIBRARY_X64
 		!insertmacro InstallLib REGDLL       NOTSHARED REBOOT_PROTECTED      DragDropInterceptor_64.dll $INSTDIR\DragDropInterceptor_64.dll $INSTDIR
-	${Else}
-		!insertmacro InstallLib REGDLL       NOTSHARED REBOOT_PROTECTED      DragDropInterceptor_32.dll $INSTDIR\DragDropInterceptor_32.dll $INSTDIR
 	${EndIf}  
+	!insertmacro InstallLib REGDLL       NOTSHARED REBOOT_PROTECTED      DragDropInterceptor_32.dll $INSTDIR\DragDropInterceptor_32.dll $INSTDIR
+	
   
 SectionEnd
 
@@ -105,9 +105,9 @@ Section "Uninstall"
   ; the dll  
   	${If} ${RunningX64}
 		!insertmacro UninstallLib REGDLL       NOTSHARED REBOOT_PROTECTED       $INSTDIR\DragDropInterceptor_64.dll
-	${Else}
-		!insertmacro UninstallLib REGDLL       NOTSHARED REBOOT_PROTECTED       $INSTDIR\DragDropInterceptor_32.dll
 	${EndIf}
+	!insertmacro UninstallLib REGDLL       NOTSHARED REBOOT_PROTECTED       $INSTDIR\DragDropInterceptor_32.dll
+	
   
   ; Remove files and uninstaller
   Delete $INSTDIR\readme.txt
