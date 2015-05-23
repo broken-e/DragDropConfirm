@@ -1,10 +1,10 @@
  ___________________________________________
 //                                         \\
-||    DragDropInterceptor by Trey Miller   ||
+||      DragDropConfirm by Trey Miller     ||
 \\                                         //
  \\------------ { Broken e; } ------------//
  //                                       \\ 
-// http://broken-e.com/dragdropinterceptor \\
+//   http://broken-e.com/dragdropconfirm   \\
 \\_________________________________________//
 
  

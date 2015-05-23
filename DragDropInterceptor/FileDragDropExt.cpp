@@ -164,12 +164,12 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 
 	wchar_t itemText[MAX_PATH] = L"&Move here";
 	// try to retrieve overridden itemText from registry
-	HRESULT hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropInterceptor\\", L"ItemText", itemText, MAX_PATH);
+	HRESULT hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"ItemText", itemText, MAX_PATH);
 
 	if (!SUCCEEDED(hr))
 	{ // if overridden text is not found, see if we want to display the value in a messagebox
 		wchar_t defaultText[4];
-		hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropInterceptor\\", L"ShowDefaultText", defaultText, 4);
+		hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"ShowDefaultText", defaultText, 4);
 		if (SUCCEEDED(hr) && defaultText[0])
 		{ // we'll display the actual current default value, for language customization
 			MessageBoxW(0, dmii.dwTypeData, L"The Default Item's Value Is:", MB_OK | MB_ICONINFORMATION);
@@ -184,9 +184,9 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 
 	// set messagebox title and description
 	wchar_t askTitle[MAX_PATH] = L"Hold up there...";
-	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropInterceptor\\", L"AskTitle", askTitle, MAX_PATH);
+	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskTitle", askTitle, MAX_PATH);
 	wchar_t askDescription[1024] = L"Are you sure you want to move the file(s) or folder(s)?";
-	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropInterceptor\\", L"AskDescription", askDescription, 1024);
+	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskDescription", askDescription, 1024);
 
 	// ask if we want to do the default action (should be moving files)
 	int button = MessageBoxW(0, askDescription, askTitle, MB_OKCANCEL | MB_ICONEXCLAMATION | MB_DEFBUTTON2);
