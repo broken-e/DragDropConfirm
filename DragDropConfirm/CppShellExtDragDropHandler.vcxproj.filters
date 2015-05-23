@@ -32,11 +32,6 @@
     <None Include="GlobalExportFunctions.def">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="Documentation\ReadMe.htm" />
-    <None Include="Documentation\ReadMe_files\themedata.thmx" />
-    <None Include="register.bat">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassFactory.h">
@@ -48,19 +43,13 @@
     <ClInclude Include="Reg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Documentation\ReadMe_files\image001.png">
+    <ResourceCompile Include="CppShellExtDragDropHandler.rc">
       <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Documentation\ReadMe_files\image002.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="Documentation\ReadMe_files\colorschememapping.xml" />
-    <Xml Include="Documentation\ReadMe_files\filelist.xml" />
-    <Xml Include="Documentation\ReadMe_files\item0008.xml" />
-    <Xml Include="Documentation\ReadMe_files\props009.xml" />
+    </ResourceCompile>
   </ItemGroup>
 </Project>

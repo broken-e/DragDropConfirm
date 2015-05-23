@@ -179,26 +179,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GlobalExportFunctions.def" />
-    <None Include="Documentation\ReadMe.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="Documentation\ReadMe_files\themedata.thmx" />
-    <None Include="register.bat" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassFactory.h" />
     <ClInclude Include="FileDragDropExt.h" />
     <ClInclude Include="Reg.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Documentation\ReadMe_files\image001.png" />
-    <Image Include="Documentation\ReadMe_files\image002.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="Documentation\ReadMe_files\colorschememapping.xml" />
-    <Xml Include="Documentation\ReadMe_files\filelist.xml" />
-    <Xml Include="Documentation\ReadMe_files\item0008.xml" />
-    <Xml Include="Documentation\ReadMe_files\props009.xml" />
+    <ResourceCompile Include="CppShellExtDragDropHandler.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
