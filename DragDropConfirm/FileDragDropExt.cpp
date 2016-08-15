@@ -172,7 +172,8 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 		hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"ShowDefaultText", defaultText, 4);
 		if (SUCCEEDED(hr) && defaultText[0])
 		{ // we'll display the actual current default value, for language customization
-			MessageBoxW(0, dmii.dwTypeData, L"The Default Item's Value Is:", MB_OK | MB_ICONINFORMATION);
+		  // Dialog is always topmost
+			MessageBoxW(0, dmii.dwTypeData, L"The Default Item's Value Is:", MB_OK | MB_ICONINFORMATION | MB_TOPMOST);
 		}
 	}
 
@@ -189,7 +190,8 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskDescription", askDescription, 1024);
 
 	// ask if we want to do the default action (should be moving files)
-	int button = MessageBoxW(0, askDescription, askTitle, MB_OKCANCEL | MB_ICONEXCLAMATION | MB_DEFBUTTON2);
+	// Dialog is always topmost
+	int button = MessageBoxW(0, askDescription, askTitle, MB_OKCANCEL | MB_ICONEXCLAMATION | MB_DEFBUTTON2| MB_TOPMOST);
 	if (button == IDCANCEL)
 	{ // add the com-blocking menu item to stop default move action
 		// Use either InsertMenu or InsertMenuItem to add menu items.
