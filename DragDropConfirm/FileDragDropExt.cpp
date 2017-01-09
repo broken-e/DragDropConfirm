@@ -162,6 +162,7 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 		return HRESULT_FROM_WIN32(GetLastError());
 	}
 
+	// NOTE: On Windows XP the proper itemText value is "&Move Here"  (capitalize the H)
 	wchar_t itemText[MAX_PATH] = L"&Move here";
 	// try to retrieve overridden itemText from registry
 	HRESULT hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"ItemText", itemText, MAX_PATH);
