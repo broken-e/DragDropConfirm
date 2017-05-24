@@ -183,21 +183,40 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
 	}
 
-	// set messagebox title and description
+	// set messagebox title
 	wchar_t askTitle[MAX_PATH] = L"Hold up there...";
 	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskTitle", askTitle, MAX_PATH);
-	wchar_t askDescription[1024] = L"Are you sure you want to move the file(s) or folder(s) to the following location?";
+
+	// prepare messagebox description
+	wchar_t askDescription[1024] = L"";
 	//Note: (As of May 23, 2017 Windows 7) If more than 511 characters are in the registry value, the default is used instead.
-	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskDescription", askDescription, 1024);
-	
+	hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskDescription", askDescription, 1024);
+	bool boolIsCustomDescription = SUCCEEDED(hr);
 
-	//Perhaps overflow check is superfluous, but being careful since I (bduffek) don't know where the 511 "get" limit is from
-	//or if it can change.
-	wcsncat_s(askDescription, L"\r\n\r\n", (1024 - (static_cast<int>(wcsnlen(askDescription, 1024)) + 1)));
+	//Checking if directory destination display is disabled (on by default) and setting up the description.
+	wchar_t showDirectory[4];
+	hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"ShowDirectory", showDirectory, 4);
+	if (SUCCEEDED(hr) && !showDirectory[0])
+	{
+		if (!boolIsCustomDescription)
+		{
+			wcscat(askDescription, L"Are you sure you want to move the file(s) or folder(s)?");
+		}
+	}
+	else
+	{
+		if (!boolIsCustomDescription)
+		{
+			wcscat(askDescription, L"Are you sure you want to move the file(s) or folder(s) to the following location?");
+		}
 
-	//Adding directory to description, taking care to not overflow if MAX_PATH becomes much larger in the future.
-	wcsncat_s(askDescription, m_szTargetDir, (1024 - (static_cast<int>(wcsnlen(askDescription, 1024)) + 1)));
+		//Adding line breaks to the description.  Perhaps overflow check is superfluous, but being careful since 
+		//I (bduffek) don't know where the 511 "get" limit is from or if it can change.  
+		wcsncat_s(askDescription, L"\r\n\r\n", (1024 - (static_cast<int>(wcsnlen(askDescription, 1024)) + 1)));
 
+		//Adding directory to description, taking care to not overflow if MAX_PATH becomes much larger in the future.
+		wcsncat_s(askDescription, m_szTargetDir, (1024 - (static_cast<int>(wcsnlen(askDescription, 1024)) + 1)));
+	}
 
 	// ask if we want to do the default action (should be moving files)
 	// Dialog is always topmost
