@@ -217,10 +217,23 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 		//Adding directory to description, taking care to not overflow if MAX_PATH becomes much larger in the future.
 		wcsncat_s(askDescription, m_szTargetDir, (1024 - (static_cast<int>(wcsnlen(askDescription, 1024)) + 1)));
 	}
+	
+	//Check if the default button is changed to "Ok" in the Registry.
+	wchar_t defaultMessageBoxWButton[4];
+	hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"DefaultButtonOK", defaultMessageBoxWButton, 4);
+	UINT uintDefButtonChoice;
+	if (SUCCEEDED(hr) && defaultMessageBoxWButton[0])
+	{
+		uintDefButtonChoice = MB_DEFBUTTON1;
+	}
+	else 
+	{
+		uintDefButtonChoice = MB_DEFBUTTON2;
+	}
 
 	// ask if we want to do the default action (should be moving files)
 	// Dialog is always topmost
-	int button = MessageBoxW(0, askDescription, askTitle, MB_OKCANCEL | MB_ICONEXCLAMATION | MB_DEFBUTTON2| MB_TOPMOST);
+	int button = MessageBoxW(0, askDescription, askTitle, MB_OKCANCEL | MB_ICONEXCLAMATION | uintDefButtonChoice| MB_TOPMOST);
 	if (button == IDCANCEL)
 	{ // add the com-blocking menu item to stop default move action
 		// Use either InsertMenu or InsertMenuItem to add menu items.
