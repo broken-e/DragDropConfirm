@@ -41,7 +41,7 @@ extern long g_cDllRef;
 #define IDM_RUNFROMHERE            0  // The command's identifier offset
 
 FileDragDropExt::FileDragDropExt() : m_cRef(1),
-m_pszMenuText(L"Don't move") {
+m_pszMenuText(L"Cancel action") {
 	InterlockedIncrement(&g_cDllRef);
 }
 
@@ -177,8 +177,30 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 		}
 	}
 
-	// If default menu item's string doesn't equal "&Move here" or the overridden text, then we don't do anything. 
-	if (wcscmp(itemText, dmii.dwTypeData))
+	
+	//Checking if a copy warning is enabled in the registry.
+	wchar_t WarnOnCopy[4];
+	hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"WarnOnCopy", WarnOnCopy, 4);
+	bool boolWarnOnCopy = (SUCCEEDED(hr) && WarnOnCopy[0]);
+
+	//Setting up the text to check for a copy operation.
+	wchar_t itemText2[MAX_PATH] = L"&Copy here";
+	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"ItemText2", itemText2, MAX_PATH);
+	
+	//Checking for matches
+	int intWhichMatch = -1;
+	if (!wcscmp(itemText, dmii.dwTypeData)) 
+	{
+		intWhichMatch = 1;
+	}
+	else if (!wcscmp(itemText2, dmii.dwTypeData))
+	{
+		intWhichMatch = 2;
+	}
+
+	// If default menu item's string doesn't equal "&Move here" or "&Copy here" (if enabled)
+	// or overridden text, then we don't do anything. 
+	if (!((intWhichMatch == 1) || (intWhichMatch == 2)) || ((intWhichMatch == 2) && (boolWarnOnCopy == false)))
 	{
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
 	}
@@ -187,31 +209,53 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 	wchar_t askTitle[MAX_PATH] = L"Hold up there...";
 	GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskTitle", askTitle, MAX_PATH);
 
-	// prepare messagebox description
+	// prepare messagebox description holder
 	wchar_t askDescription[1024] = L"";
-	//Note: (As of May 23, 2017 Windows 7) If more than 511 characters are in the registry value, the default is used instead.
-	hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskDescription", askDescription, 1024);
+	
+	// Attempting to read a custom description from the registry.
+	if (intWhichMatch == 1) 
+	{
+		hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskDescription", askDescription, 1024);
+	}
+	else if (intWhichMatch == 2)
+	{
+		hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"AskDescription2", askDescription, 1024);
+	}
+
 	bool boolIsCustomDescription = SUCCEEDED(hr);
 
-	//Checking if directory destination display is disabled (on by default) and setting up the description.
+	//Checking if directory destination display is disabled (on by default) and setting up the default description if necessary.
 	wchar_t showDirectory[4];
 	hr = GetHKLMRegistryKeyAndValue(L"SOFTWARE\\DragDropConfirm\\", L"ShowDirectory", showDirectory, 4);
 	if (SUCCEEDED(hr) && !showDirectory[0])
 	{
 		if (!boolIsCustomDescription)
 		{
-			wcscat(askDescription, L"Are you sure you want to move the file(s) or folder(s)?");
+			if (intWhichMatch == 1)
+			{
+				wcscat_s(askDescription, L"Are you sure you want to move the file(s) or folder(s)?");
+			}
+			else
+			{
+				wcscat_s(askDescription, L"Are you sure you want to copy the file(s) or folder(s)?");
+			}
 		}
 	}
 	else
 	{
 		if (!boolIsCustomDescription)
 		{
-			wcscat(askDescription, L"Are you sure you want to move the file(s) or folder(s) to the following location?");
+			if (intWhichMatch == 1)
+			{
+				wcscat_s(askDescription, L"Are you sure you want to move the file(s) or folder(s) to the following location?");
+			}
+			else
+			{
+				wcscat_s(askDescription, L"Are you sure you want to copy the file(s) or folder(s) to the following location?");
+			}
 		}
 
-		//Adding line breaks to the description.  Perhaps overflow check is superfluous, but being careful since 
-		//I (bduffek) don't know where the 511 "get" limit is from or if it can change.  
+		//Adding line breaks to the description.  Perhaps overflow check is superfluous, but being careful
 		wcsncat_s(askDescription, L"\r\n\r\n", (1024 - (static_cast<int>(wcsnlen(askDescription, 1024)) + 1)));
 
 		//Adding directory to description, taking care to not overflow if MAX_PATH becomes much larger in the future.
@@ -233,7 +277,7 @@ IFACEMETHODIMP FileDragDropExt::QueryContextMenu(
 
 	// ask if we want to do the default action (should be moving files)
 	// Dialog is always topmost
-	int button = MessageBoxW(0, askDescription, askTitle, MB_OKCANCEL | MB_ICONEXCLAMATION | uintDefButtonChoice| MB_TOPMOST);
+	int button = MessageBoxW(0, askDescription, askTitle, MB_OKCANCEL | MB_ICONEXCLAMATION | uintDefButtonChoice | MB_TOPMOST);
 	if (button == IDCANCEL)
 	{ // add the com-blocking menu item to stop default move action
 		// Use either InsertMenu or InsertMenuItem to add menu items.
