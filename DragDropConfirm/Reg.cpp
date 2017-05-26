@@ -122,7 +122,7 @@ HRESULT GetHKLMRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName,
 
 	// Try to open the specified registry key. 
 	hr = HRESULT_FROM_WIN32(RegOpenKeyEx(HKEY_LOCAL_MACHINE, pszSubKey, 0,
-		KEY_READ, &hKey));
+		KEY_READ | KEY_WOW64_64KEY, &hKey));
 
 	if (SUCCEEDED(hr))
 	{
