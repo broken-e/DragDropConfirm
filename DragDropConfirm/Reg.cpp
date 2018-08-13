@@ -22,6 +22,9 @@ WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 
 #include "Reg.h"
 #include <strsafe.h>
+// Added for XP support (replace RegDeleteTree with SHDeleteKey)
+#include <Shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
 
 
 #pragma region Registry Helper Functions
@@ -214,7 +217,7 @@ HRESULT RegisterInprocServer(PCWSTR pszModule, const CLSID& clsid,
 //
 //   FUNCTION: UnregisterInprocServer
 //
-//   PURPOSE: Unegister the in-process component in the registry.
+//   PURPOSE: Unregister the in-process component in the registry.
 //
 //   PARAMETERS:
 //   * clsid - Class ID of the component
@@ -231,10 +234,12 @@ HRESULT UnregisterInprocServer(const CLSID& clsid)
     wchar_t szSubkey[MAX_PATH];
 
     // Delete the HKCR\CLSID\{<CLSID>} key.
-    hr = StringCchPrintf(szSubkey, ARRAYSIZE(szSubkey), L"CLSID\\%s", szCLSID);
-    if (SUCCEEDED(hr))
+    hr = StringCchPrintf(szSubkey, ARRAYSIZE(szSubkey), L"CLSID\\%s", szCLSID); // essentially a string.format
+    if (SUCCEEDED(hr)) // formatted OK
     {
-        hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey));
+		// The function RegDeleteTree is not supported in Windows XP.
+        // hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey));
+		hr = HRESULT_FROM_WIN32(SHDeleteKey(HKEY_CLASSES_ROOT, szSubkey));
     }
 
     return hr;
@@ -357,7 +362,8 @@ HRESULT UnregisterShellExtDragDropHandler(const CLSID& clsid)
         L"Directory\\shellex\\DragDropHandlers\\%s", szCLSID);
     if (SUCCEEDED(hr))
     {
-        hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey));
+        //hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey));
+		hr = HRESULT_FROM_WIN32(SHDeleteKey(HKEY_CLASSES_ROOT, szSubkey));
     }
 
     if (SUCCEEDED(hr))
@@ -367,7 +373,8 @@ HRESULT UnregisterShellExtDragDropHandler(const CLSID& clsid)
             L"Folder\\shellex\\DragDropHandlers\\%s", szCLSID);
         if (SUCCEEDED(hr))
         {
-            hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey));
+            //hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey));
+			hr = HRESULT_FROM_WIN32(SHDeleteKey(HKEY_CLASSES_ROOT, szSubkey));
         }
     }
 
@@ -378,7 +385,8 @@ HRESULT UnregisterShellExtDragDropHandler(const CLSID& clsid)
             L"Drive\\shellex\\DragDropHandlers\\%s", szCLSID);
         if (SUCCEEDED(hr))
         {
-            hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey));
+            //hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey));
+			hr = HRESULT_FROM_WIN32(SHDeleteKey(HKEY_CLASSES_ROOT, szSubkey));
         }
     }
 

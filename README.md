@@ -9,6 +9,10 @@ You can view the Microsoft Open Source Licenses here: http://www.microsoft.com/e
 
 NOTE: I have only tested this with Windows 7.  
 
+Update 1/9/2017: Version 1.2 modified for compatibility with Windows XP.
+Note that the Item text in XP for "$Move Here" must be manually specified in the registry because of the capitalization of 'Here' is different.
+
+
 ###How this works:
 First, an important understanding about the way Windows drag and drop works: if you right-click to drag and drop, upon dropping the file, it will not be moved immediately, but instead explorer will open a context menu, with **Move here** bolded because it is the default. Now, what happens when you left-click drag and drop is that this context menu is silently used and the default is chosen automatically. 
 

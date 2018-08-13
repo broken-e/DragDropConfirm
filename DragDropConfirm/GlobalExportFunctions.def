@@ -1,4 +1,4 @@
-LIBRARY	"CppShellExtDragDropHandler"
+LIBRARY	"DragDropConfirm_32"
 EXPORTS
     DllGetClassObject   PRIVATE
     DllCanUnloadNow     PRIVATE
