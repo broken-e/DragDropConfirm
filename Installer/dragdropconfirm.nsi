@@ -126,7 +126,7 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\DragDropConfirm"
   RMDir "$INSTDIR"
   
-  MessageBox MB_YESNO|MB_ICONQUESTION "It's a good idea to reboot after removing DragDropConfirm. Reboot now?" IDNO +2
+  MessageBox MB_YESNO|MB_ICONQUESTION "It's a good idea to reboot after removing DragDropConfirm. Reboot now?" /SD IDNO IDNO +2
 	Reboot
 
 SectionEnd
