@@ -1,4 +1,5 @@
-##DragDropConfirm
+## DragDropConfirm
+
 (previously called ~~DragDropInterceptor~~) 
 
 If you have ever worked in a Windows environment where many users shared files on a server, you have probably seen it happen where a folder or file is suddenly gone, only to be discovered in some other folder (often a sibling folder). This is usually due to an accident that is very easy to do: press slightly too hard on the mouse button while moving the cursor over the windows explorer window, causing a drag and drop move event with no confirmation.
@@ -13,7 +14,8 @@ Update 1/9/2017: Version 1.2 modified for compatibility with Windows XP.
 Note that the Item text in XP for "$Move Here" must be manually specified in the registry because of the capitalization of 'Here' is different.
 
 
-###How this works:
+### How this works:
+
 First, an important understanding about the way Windows drag and drop works: if you right-click to drag and drop, upon dropping the file, it will not be moved immediately, but instead explorer will open a context menu, with **Move here** bolded because it is the default. Now, what happens when you left-click drag and drop is that this context menu is silently used and the default is chosen automatically. 
 
 So basically what the code does is catch this drag and drop context menu, check to see if the default is **Move here**, and if so, pops up a dialog window, asking if you are sure you want to move. If you say OK, it lets go of its stranglehold on your context menu and allows the move. If you hit Cancel, it will create a *new* context menu item called **Don't move**, which does exactly what it says, and it will set that as the default item.
